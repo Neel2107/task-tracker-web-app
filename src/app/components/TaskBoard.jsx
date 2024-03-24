@@ -37,20 +37,20 @@ const TaskBoard = () => {
   const filteredTasks = tasks.filter(
     (task) =>
       task.assigneeName.toLowerCase().includes(assigneeFilter.toLowerCase()) &&
-      (priorityFilter === "All" || task.selectedPriority === priorityFilter)
+      (priorityFilter === "All" || task.priority === priorityFilter)
   );
 
   const sortedTasks = filteredTasks.sort((a, b) => {
     if (sortPriority === "P1") {
-      if (a.selectedPriority === "P1") return -1;
-      if (b.selectedPriority === "P1") return 1;
-      if (a.selectedPriority === "P2") return 1;
-      if (b.selectedPriority === "P2") return -1;
+      if (a.priority === "P1") return -1;
+      if (b.priority === "P1") return 1;
+      if (a.priority === "P2") return 1;
+      if (b.priority === "P2") return -1;
       return 0;
     } else if (sortPriority === "P2") {
-      return b.selectedPriority.localeCompare(a.selectedPriority);
+      return b.priority.localeCompare(a.priority);
     } else {
-      return a.selectedPriority.localeCompare(b.selectedPriority);
+      return a.priority.localeCompare(b.priority);
     }
   });;
 
@@ -93,7 +93,7 @@ const TaskBoard = () => {
 
               <Dropdown>
                 <DropdownTrigger>
-                  <Button variant="bordered"> {priorityFilter}</Button>
+                  <Button variant="flat"> {priorityFilter}</Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Priority">
                   <DropdownItem

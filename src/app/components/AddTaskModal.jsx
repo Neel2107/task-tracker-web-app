@@ -36,7 +36,7 @@ const AddTaskModal = ({ isOpen, onClose }) => {
       description,
       team,
       assigneeName,
-      selectedPriority,
+      priority: selectedPriority === "Priority" ? "P0" : selectedPriority,
       status: 1,
       startDate: new Date().toISOString(),
     };
