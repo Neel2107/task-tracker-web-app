@@ -16,6 +16,7 @@ const DeleteModal = ({ isOpen, onClose,taskToDelete }) => {
   const handleDelete = () => {
     const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
     setTasks(updatedTasks);
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     onClose();
   };
     
