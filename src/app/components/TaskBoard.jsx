@@ -19,6 +19,8 @@ const TaskBoard = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [assigneeFilter, setAssigneeFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("All");
+  const [sortPriority, setSortPriority] = useState("P0"); // Add this line
+
 
   useEffect(() => {
     const loadedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -29,7 +31,6 @@ const TaskBoard = () => {
   const closeAddModal = () => {
     const loadedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     setTasks(loadedTasks);
-
     setIsAddModalOpen(false);
   };
 
@@ -39,7 +40,21 @@ const TaskBoard = () => {
       (priorityFilter === "All" || task.selectedPriority === priorityFilter)
   );
 
-  const tasksByStatus = filteredTasks.reduce((acc, task) => {
+  const sortedTasks = filteredTasks.sort((a, b) => {
+    if (sortPriority === "P1") {
+      if (a.selectedPriority === "P1") return -1;
+      if (b.selectedPriority === "P1") return 1;
+      if (a.selectedPriority === "P2") return 1;
+      if (b.selectedPriority === "P2") return -1;
+      return 0;
+    } else if (sortPriority === "P2") {
+      return b.selectedPriority.localeCompare(a.selectedPriority);
+    } else {
+      return a.selectedPriority.localeCompare(b.selectedPriority);
+    }
+  });;
+
+  const tasksByStatus = sortedTasks.reduce((acc, task) => {
     if (!acc[task.status]) acc[task.status] = [];
     acc[task.status].push(task);
     return acc;
@@ -111,14 +126,18 @@ const TaskBoard = () => {
                 Sort By:
                 <Dropdown>
                   <DropdownTrigger>
-                    <Button variant="bordered">Priority</Button>
+                    <Button variant="bordered">{sortPriority}</Button>
                   </DropdownTrigger>
-                  <DropdownMenu aria-label="Priority" items={items}>
-                    {(item) => (
-                      <DropdownItem key={item.key} color={"default"}>
-                        {item.label}
+                  <DropdownMenu aria-label="Priority">
+                    {["P0", "P1", "P2"].map((priority) => (
+                      <DropdownItem
+                        key={priority}
+                        color={"default"}
+                        onClick={() => setSortPriority(priority)}
+                      >
+                        {priority}
                       </DropdownItem>
-                    )}
+                    ))}
                   </DropdownMenu>
                 </Dropdown>
               </label>

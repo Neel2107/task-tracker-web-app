@@ -29,6 +29,7 @@ const Card = ({ statusID, tasks }) => {
               assignee={task.assigneeName}
               description={task.description}
               status={text}
+              statusID={statusID}
               id={task.id}
             />
           );

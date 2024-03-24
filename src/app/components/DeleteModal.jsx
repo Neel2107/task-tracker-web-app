@@ -19,6 +19,8 @@ const DeleteModal = ({ isOpen, onClose,taskToDelete }) => {
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     onClose();
   };
+
+  const isCompleted = Number(taskToDelete.statusID) === 3;
     
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -28,14 +30,24 @@ const DeleteModal = ({ isOpen, onClose,taskToDelete }) => {
             <ModalHeader className="flex flex-col gap-1">
               DELETE TASK
             </ModalHeader>
-            <ModalBody>Do you want to delete this task?</ModalBody>
+            <ModalBody>
+              {isCompleted ? "This task is completed and cannot be deleted" : "Do you want to delete this task?"}
+            </ModalBody>
             <ModalFooter>
-              <Button color="default" variant="light" onPress={onClose}>
-                No
-              </Button>
-              <Button color="danger" onPress={handleDelete}>
-                Yes
-              </Button>
+              {isCompleted ? (
+                <Button color="default" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              ) : (
+                <>
+                  <Button color="default" variant="light" onPress={onClose}>
+                    No
+                  </Button>
+                  <Button color="danger" onPress={handleDelete}>
+                    Yes
+                  </Button>
+                </>
+              )}
             </ModalFooter>
           </>
         )}

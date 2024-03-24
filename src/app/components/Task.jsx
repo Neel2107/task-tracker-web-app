@@ -11,7 +11,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import DeleteModal from "./DeleteModal";
 import { useAppContext } from "../context/AppContext";
 
-const Task = ({ title, priority, assignee, description, status, id }) => {
+const Task = ({ title, priority, assignee, description, status, id, statusID }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [popoverKey, setPopoverKey] = useState(Math.random());
 
@@ -29,13 +29,12 @@ const Task = ({ title, priority, assignee, description, status, id }) => {
   };
 
 
-  console.log("id`", id)
   return (
     <div className="flex flex-col gap-2 p-2 bg-zinc-100 rounded-md">
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        taskToDelete={{ title, priority, assignee, description, status, id }}
+        taskToDelete={{ title, priority, assignee, description, status, id, statusID }}
       />
       <div className="flex flex-row items-center justify-between border-b pb-2 border-zinc-500">
         <h2 className="text-sm font-medium">{title}</h2>
