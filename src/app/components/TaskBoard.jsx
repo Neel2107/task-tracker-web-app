@@ -11,17 +11,19 @@ import {
 } from "@nextui-org/react";
 import AddTaskModal from "./AddTaskModal";
 import { items } from "../utility/dropdownData";
+import { useAppContext } from "../context/AppContext";
 
 const TaskBoard = () => {
+
+  const { tasks, setTasks } = useAppContext();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [tasks, setTasks] = useState([]);
   const [assigneeFilter, setAssigneeFilter] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState("Priority");
+  const [priorityFilter, setPriorityFilter] = useState("All");
 
   useEffect(() => {
     const loadedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     setTasks(loadedTasks);
-    setPriorityFilter("All"); // Reset priority filter when component mounts
+    setPriorityFilter("All"); 
   }, []);
 
   const closeAddModal = () => {
@@ -42,6 +44,8 @@ const TaskBoard = () => {
     acc[task.status].push(task);
     return acc;
   }, {});
+
+
 
   return (
     <div className="flex flex-col gap-5 justify-center py-10 px-5 lg:px-10 xl:px-20 ">
@@ -133,7 +137,7 @@ const TaskBoard = () => {
         <div className="grid grid-cols-1  md:grid-cols-2   lg:grid-cols-4  xl:grid-cols-5 gap-4 ">
           {Object.entries(tasksByStatus).map(([status, tasks]) => (
             <div className="" key={status}>
-              <Card statusID={status} tasks={tasks} />
+              <Card statusID={status} tasks={tasks}   />
             </div>
           ))}
         </div>

@@ -7,8 +7,18 @@ import {
   ModalFooter,
   Button,
 } from "@nextui-org/react";
+import { useAppContext } from "../context/AppContext";
 
-const DeleteModal = ({ isOpen, onClose }) => {
+const DeleteModal = ({ isOpen, onClose,taskToDelete }) => {
+
+  const { tasks, setTasks } = useAppContext();
+
+  const handleDelete = () => {
+    const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
+    setTasks(updatedTasks);
+    onClose();
+  };
+    
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
@@ -19,11 +29,11 @@ const DeleteModal = ({ isOpen, onClose }) => {
             </ModalHeader>
             <ModalBody>Do you want to delete this task?</ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Close
+              <Button color="default" variant="light" onPress={onClose}>
+                No
               </Button>
-              <Button color="primary" onPress={onClose}>
-                Action
+              <Button color="danger" onPress={handleDelete}>
+                Yes
               </Button>
             </ModalFooter>
           </>

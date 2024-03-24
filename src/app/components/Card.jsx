@@ -14,20 +14,25 @@ const Card = ({ statusID, tasks }) => {
 
   return (
     <div className="flex flex-col rounded-md gap-4 shadow-sm bg-white">
-      <div className={`flex w-full items-center justify-center py-2 text-white rounded-t-md font-semibold ${color}`}>
+      <div
+        className={`flex w-full items-center justify-center py-2 text-white rounded-t-md font-semibold ${color}`}
+      >
         {text}
       </div>
       <div className="p-2 w-full flex flex-col gap-2">
-        {tasks.map((task, index) => (
-          <Task
-            key={index}
-            title={task.title}
-            priority={task.selectedPriority}
-            assignee={task.assigneeName}
-            description={task.description}
-            status={text}
-          />
-        ))}
+        {tasks.map((task, index) => {
+          return (
+            <Task
+              key={index}
+              title={task.title}
+              priority={task.selectedPriority}
+              assignee={task.assigneeName}
+              description={task.description}
+              status={text}
+              id={task.id}
+            />
+          );
+        })}
       </div>
     </div>
   );
