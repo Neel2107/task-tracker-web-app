@@ -129,6 +129,9 @@ const AddTaskModal = ({ isOpen, onClose }) => {
                 color={assigneeNameError ? "danger" : "default"}
               
               />
+              <div>
+
+             
               <Dropdown>
                 <DropdownTrigger>
                   <Button variant="bordered">
@@ -149,6 +152,7 @@ const AddTaskModal = ({ isOpen, onClose }) => {
                   )}
                 </DropdownMenu>
               </Dropdown>
+              </div>
             </ModalBody>
             <ModalFooter>
               <Button color="default" variant="flat" onPress={onClose}>

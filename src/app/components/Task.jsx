@@ -43,7 +43,6 @@ const Task = ({
     setIsEditModalOpen(false);
   };
 
-  console.log("priority", priority)
 
   return (
     <div className="flex flex-col gap-2 p-2 bg-zinc-100 rounded-md">

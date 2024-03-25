@@ -29,15 +29,22 @@ const EditTaskModal = ({ isOpen, onClose, taskToEdit }) => {
   const [newStatus, setNewStatus] = useState(taskToEdit.statusID);
 
 
-console.log(taskToEdit); 
 
 const handleSubmit = () => {
-    const updatedTasks = tasks.map((task) =>
-        task.id === taskToEdit.id ? { ...task, status: newStatus, statusID: getKeyByValue(statusMap, newStatus), priority: selectedPriority } : task
-    );
-    setTasks(updatedTasks);
-    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-    onClose();
+  const updatedTasks = tasks.map((task) => {
+    if (task.id === taskToEdit.id) {
+      let updatedTask = { ...task, status: newStatus, statusID: getKeyByValue(statusMap, newStatus), priority: selectedPriority };
+      if (newStatus === getKeyByValue(statusMap, "Completed")) {
+        updatedTask.endDate = new Date().toISOString();
+      }
+      return updatedTask;
+    } else {
+      return task;
+    }
+  });
+  setTasks(updatedTasks);
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  onClose();
 };
 
   

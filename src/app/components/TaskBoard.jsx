@@ -12,20 +12,26 @@ import {
 import AddTaskModal from "./AddTaskModal";
 import { items } from "../utility/dropdownData";
 import { useAppContext } from "../context/AppContext";
+import CardSkeleton from "./CardSkeleton";
+import NoTasks from "./NoTasks";
 
 const TaskBoard = () => {
-
   const { tasks, setTasks } = useAppContext();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [assigneeFilter, setAssigneeFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("All");
-  const [sortPriority, setSortPriority] = useState("P0"); // Add this line
+  const [sortPriority, setSortPriority] = useState("P0");
+  const [selectedStartDate, setSelectedStartDate] = useState("");
+  const [selectedEndDate, setSelectedEndDate] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
+  console.log(tasks);
 
   useEffect(() => {
     const loadedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     setTasks(loadedTasks);
-    setPriorityFilter("All"); 
+    setPriorityFilter("All");
+    setIsLoading(false);
   }, []);
 
   const closeAddModal = () => {
@@ -34,11 +40,23 @@ const TaskBoard = () => {
     setIsAddModalOpen(false);
   };
 
-  const filteredTasks = tasks.filter(
-    (task) =>
+  const filteredTasks = tasks.filter((task) => {
+    let startDate = new Date(task.startDate);
+    let endDate = task.endDate ? new Date(task.endDate) : null;
+
+    if (selectedStartDate && startDate < new Date(selectedStartDate)) {
+      return false;
+    }
+
+    if (selectedEndDate && (!endDate || endDate > new Date(selectedEndDate))) {
+      return false;
+    }
+
+    return (
       task.assigneeName.toLowerCase().includes(assigneeFilter.toLowerCase()) &&
       (priorityFilter === "All" || task.priority === priorityFilter)
-  );
+    );
+  });
 
   const sortedTasks = filteredTasks.sort((a, b) => {
     if (sortPriority === "P1") {
@@ -52,7 +70,7 @@ const TaskBoard = () => {
     } else {
       return a.priority.localeCompare(b.priority);
     }
-  });;
+  });
 
   const tasksByStatus = sortedTasks.reduce((acc, task) => {
     if (!acc[task.status]) acc[task.status] = [];
@@ -60,13 +78,11 @@ const TaskBoard = () => {
     return acc;
   }, {});
 
-
-
   return (
-    <div className="flex flex-col gap-5 justify-center py-10 px-5 lg:px-10 xl:px-20 ">
+    <div className="flex flex-col gap-5 justify-center py-10 px-2 lg:px-10 xl:px-20 ">
       <AddTaskModal isOpen={isAddModalOpen} onClose={closeAddModal} />
       <div className="flex flex-row items-center justify-between">
-        <h1 className="text-xl font-bold ">Task Board</h1>
+        <h1 className="text-2xl font-bold ">Task Board</h1>
 
         <Avatar
           src="https://i.pravatar.cc/150?u=a04258114e29026302d"
@@ -75,25 +91,27 @@ const TaskBoard = () => {
       </div>
 
       <div
-        className="flex flex-col gap-5 py-4 px-6 border border-zinc-300 bg-zinc-50
+        className="flex flex-col gap-5 py-4 px-4 lg:px-6 border border-zinc-300 bg-zinc-50
        rounded-lg shadow-md"
       >
         <div className="flex flex-row  justify-between">
           <div className="flex flex-col gap-5 ">
-            <div className="flex flex-row items-center  gap-4 flex-nowrap w-full">
-              <h2 className="text-base font-semibold ">Filter By: </h2>
+            <div className="flex flex-col md:flex-row items-center  gap-4 flex-nowrap w-full">
+              <h2 className="text-base font-semibold self-start
+              md:self-center
+               lg:self-auto ">Filter By: </h2>
 
               <Input
                 type="Text"
-                className="w-1/4"
+                className="md:w-1/4 lg:w-1/4"
                 label="Assignee Name"
                 value={assigneeFilter}
                 onChange={(e) => setAssigneeFilter(e.target.value)}
               />
 
-              <Dropdown>
+              <Dropdown className="w-full md:w-auto">
                 <DropdownTrigger>
-                  <Button variant="flat"> {priorityFilter}</Button>
+                  <Button variant="flat" className="w-full md:w-auto"> {priorityFilter}</Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Priority">
                   <DropdownItem
@@ -115,10 +133,26 @@ const TaskBoard = () => {
                 </DropdownMenu>
               </Dropdown>
 
-              <div className="flex flex-row items-center gap-2 ">
-                <Input type="date" className="px-4 py-2 " />
-
-                <Input type="date" className="px-4 py-2 " />
+              <div className="flex flex-col lg:flex-row lg:items-center gap-2 ">
+                <label className="text-xs w-full lg:w-auto text-zinc-700" >
+                  Start Date:
+               
+                <Input
+                  type="date"
+                  className="w-full md:w-auto"
+                  value={selectedStartDate}
+                  onChange={(e) => setSelectedStartDate(e.target.value || "")}
+                />
+                 </label>
+                 <label className="text-xs text-zinc-700" >
+                  End Date:
+                <Input
+                  type="date"
+                  className="w-full md:w-auto"
+                  value={selectedEndDate}
+                  onChange={(e) => setSelectedEndDate(e.target.value || "")}
+                />
+                </label>
               </div>
             </div>
             <div className="flex  flex-row items-center gap-4">
@@ -126,7 +160,7 @@ const TaskBoard = () => {
                 Sort By:
                 <Dropdown>
                   <DropdownTrigger>
-                    <Button variant="bordered">{sortPriority}</Button>
+                    <Button variant="flat">{sortPriority}</Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="Priority">
                     {["P0", "P1", "P2"].map((priority) => (
@@ -146,19 +180,23 @@ const TaskBoard = () => {
           <div>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-6 py-2 rounded-md text-white font-semibold bg-blue-500"
+              className="px-4 lg:px-6 py-2 text-sm md:text-base rounded-md text-white font-semibold bg-blue-500"
             >
               Add New Task
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1  md:grid-cols-2   lg:grid-cols-4  xl:grid-cols-5 gap-4 ">
-          {Object.entries(tasksByStatus).map(([status, tasks]) => (
-            <div className="" key={status}>
-              <Card statusID={status} tasks={tasks}   />
-            </div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 ">
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, index) => <CardSkeleton key={index} />)
+            : Object.entries(tasksByStatus).length === 0
+            ? <NoTasks />
+            : Object.entries(tasksByStatus).map(([status, tasks]) => (
+                <div className="" key={status}>
+                  <Card statusID={status} tasks={tasks} />
+                </div>
+              ))}
         </div>
       </div>
     </div>

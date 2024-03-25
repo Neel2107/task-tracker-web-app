@@ -7,7 +7,6 @@ import { statusMap } from "../utility/statusData";
 const Card = ({ statusID, tasks }) => {
   const { text, color } = statusMap[statusID] || {};
 
-  console.log("tasks---", tasks);
   return (
     <div className="flex flex-col rounded-md gap-4 shadow-sm bg-white">
       <div
@@ -17,7 +16,6 @@ const Card = ({ statusID, tasks }) => {
       </div>
       <div className="p-2 w-full flex flex-col gap-2">
         {tasks.map((task, index) => {
-          console.log("task---", task);
           return (
             <Task
               key={index}
