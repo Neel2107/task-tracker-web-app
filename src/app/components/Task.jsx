@@ -20,7 +20,7 @@ const Task = ({
   status,
   id,
   statusID,
-  team
+
 }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -70,7 +70,7 @@ const Task = ({
           status,
           id,
           statusID,
-          team
+       
         }}
       />
       <div className="flex flex-row items-center justify-between border-b pb-2 border-zinc-500">

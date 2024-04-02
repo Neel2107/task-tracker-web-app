@@ -2,8 +2,6 @@ import React from "react";
 import Task from "./Task";
 import { statusMap } from "../utility/statusData";
 
-
-
 const Card = ({ statusID, tasks }) => {
   const { text, color } = statusMap[statusID] || {};
 
@@ -21,13 +19,12 @@ const Card = ({ statusID, tasks }) => {
               key={index}
               title={task.title}
               priority={task.priority}
-              assignee={task.assigneeName}
+              assignee={task.assignee}
               description={task.description}
               status={text}
               statusID={statusID}
               id={task.id}
-              team={task.team}
-
+         
             />
           );
         })}

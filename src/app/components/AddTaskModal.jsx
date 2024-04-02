@@ -15,9 +15,14 @@ import {
 import { items } from "../utility/dropdownData";
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { addTask } from "../utility/helperFunctions";
+import { statusMap } from "../utility/statusData";
+import { useAppContext } from "../context/AppContext";
 
 const AddTaskModal = ({ isOpen, onClose }) => {
+  const { tasks, setTasks } = useAppContext();
+
   const [selectedPriority, setSelectedPriority] = useState("Priority");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -27,21 +32,32 @@ const AddTaskModal = ({ isOpen, onClose }) => {
   const [descriptionError, setDescriptionError] = useState(false);
   const [teamError, setTeamError] = useState(false);
   const [assigneeNameError, setAssigneeNameError] = useState(false);
+  const [status, setStatus] = useState(1);
 
-  const handleSubmit = () => {
-    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  const handleSubmit = async () => {
     const newTask = {
-      id: uuidv4(), // Add this line
       title,
       description,
       team,
-      assigneeName,
+      assignee: assigneeName,
       priority: selectedPriority === "Priority" ? "P0" : selectedPriority,
       status: 1,
       startDate: new Date().toISOString(),
     };
     tasks.push(newTask);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    const assignee = assigneeName;
+    const priority = selectedPriority === "Priority" ? "P0" : selectedPriority;
+    await addTask(
+      title,
+      description,
+      team,
+      assignee,
+      priority,
+      status,
+      new Date().toISOString()
+      
+    );
+
     resetForm();
     onClose();
   };
@@ -99,7 +115,7 @@ const AddTaskModal = ({ isOpen, onClose }) => {
               CREATE A TASK
             </ModalHeader>
             <ModalBody>
-            <Input
+              <Input
                 type="Text"
                 label="Title"
                 value={title}
@@ -112,7 +128,6 @@ const AddTaskModal = ({ isOpen, onClose }) => {
                 value={description}
                 onChange={handleDescriptionChange}
                 color={descriptionError ? "danger" : "default"}
-               
               />
               <Input
                 type="Text"
@@ -127,31 +142,46 @@ const AddTaskModal = ({ isOpen, onClose }) => {
                 value={assigneeName}
                 onChange={handleAssigneeNameChange}
                 color={assigneeNameError ? "danger" : "default"}
-              
               />
-              <div>
+              <div className="flex flex-row items-center gap-4">
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button variant="bordered">
+                      {selectedPriority}
 
-             
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button variant="bordered">
-                    {selectedPriority}
-
-                    <FaChevronDown />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Priority" items={items}>
-                  {(item) => (
-                    <DropdownItem
-                      key={item.key}
-                      color={"default"}
-                      onClick={() => setSelectedPriority(item.label)}
-                    >
-                      {item.label}
-                    </DropdownItem>
-                  )}
-                </DropdownMenu>
-              </Dropdown>
+                      <FaChevronDown />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="Priority" items={items}>
+                    {(item) => (
+                      <DropdownItem
+                        key={item.key}
+                        color={"default"}
+                        onClick={() => setSelectedPriority(item.label)}
+                      >
+                        {item.label}
+                      </DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </Dropdown>
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button variant="bordered">
+                      {statusMap[status].text}
+                      <FaChevronDown />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu>
+                    {Object.entries(statusMap).map(([status, { text }]) => (
+                      <DropdownItem
+                        key={status}
+                        onClick={() => setStatus(status)}
+                      >
+                        {text}
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </Dropdown>
               </div>
             </ModalBody>
             <ModalFooter>
@@ -166,7 +196,6 @@ const AddTaskModal = ({ isOpen, onClose }) => {
         )}
       </ModalContent>
     </Modal>
- 
   );
 };
 

@@ -8,15 +8,20 @@ import {
   Button,
 } from "@nextui-org/react";
 import { useAppContext } from "../context/AppContext";
+import { deleteTask } from "../utility/helperFunctions";
 
 const DeleteModal = ({ isOpen, onClose,taskToDelete }) => {
 
   const { tasks, setTasks } = useAppContext();
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
+
+    // Delete the task from the Supabase database
+    await deleteTask(taskToDelete.id);
+
     setTasks(updatedTasks);
-    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    // localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     onClose();
   };
 
