@@ -12,20 +12,20 @@ export const getTasks = async () => {
 export const addTask = async (
   title,
   description,
-
   assignee,
   priority,
   status,
-  startDate
+  startDate,
+  endDate
 ) => {
   const task = {
     title: title,
     description: description,
-  
     assignee: assignee,
     priority: priority,
     status: status,
     startDate: startDate,
+    endDate: endDate,
   };
 
   const { data, error } = await supabase.from("tasks").insert([task]);
@@ -41,6 +41,7 @@ export const addTasks = async (tasks) => {
     priority: task.priority,
     status: task.status,
     startDate: task.startDate,
+    endDate: task.endDate,
   }));
 
   const { data, error } = await supabase.from("tasks").insert(formattedTasks);

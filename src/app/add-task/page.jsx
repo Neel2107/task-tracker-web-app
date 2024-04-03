@@ -43,6 +43,7 @@ const Page = () => {
           : taskState.selectedPriority,
       status: taskState.status,
       startDate: new Date().toISOString(),
+      endDate: taskState.status == 3 ? new Date().toISOString() : null,
     };
     tasks.push(newTask);
     const assignee = taskState.assigneeName;
@@ -56,7 +57,8 @@ const Page = () => {
       assignee,
       priority,
       taskState.status,
-      new Date().toISOString()
+      new Date().toISOString(),
+      taskState.status == 3 ? new Date().toISOString() : null
     );
 
     console.log("Task added:", newTask);
@@ -94,7 +96,6 @@ const Page = () => {
     const tasksToSubmit = taskStates.map((taskState) => ({
       title: taskState.title,
       description: taskState.description,
-
       assignee: taskState.assigneeName,
       priority:
         taskState.selectedPriority === "Priority"
@@ -102,6 +103,7 @@ const Page = () => {
           : taskState.selectedPriority,
       status: taskState.status,
       startDate: new Date().toISOString(),
+      endDate: taskState.status == 3 ? new Date().toISOString() : null,
     }));
 
     await addTasks(tasksToSubmit);
