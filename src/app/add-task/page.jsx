@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 import {
-
   Button,
   DropdownItem,
   DropdownTrigger,
@@ -18,11 +17,13 @@ import { addTask, addTasks } from "../utility/helperFunctions";
 import { useAppContext } from "../context/AppContext";
 import { statusMap } from "../utility/statusData";
 import { initialTaskState, inputNumbers } from "../utility/addTaskData";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const { tasks, setTasks } = useAppContext();
   const [totalInputs, setTotalInputs] = useState(1);
   const [taskStates, setTaskStates] = useState([{ ...initialTaskState }]);
+  const route = useRouter();
 
   const handleInputChange = (index, field, value) => {
     const newTaskStates = [...taskStates];
@@ -108,6 +109,7 @@ const Page = () => {
     // Reset all tasks and set totalInputs to 1
     setTaskStates([{ ...initialTaskState }]);
     setTotalInputs(1);
+    route.push("/");
   };
 
   const resetForm = (index) => {
@@ -123,36 +125,44 @@ const Page = () => {
 
   return (
     <div
-      className="flex flex-col p-10 gap-5
-     h-screen w-screen bg-zinc-50  "
+      className="flex flex-col p-5  gap-5
+     h-auto min-h-screen   "
     >
       <div className="flex flex-col  gap-4">
         <h1 className="text-3xl font-bold">Add Tasks</h1>
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-semibold">Total Inputs:</h2>
-          <Dropdown>
-            <DropdownTrigger>
-              <Button variant="bordered" className="flex gap-4">
-                {totalInputs}
 
-                <FaChevronDown />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu items={inputNumbers}>
-              {(item) => (
-                <DropdownItem
-                  key={item.id}
-                  color={"default"}
-                  onClick={() => setTotalInputs(item.id)}
-                >
-                  {item.id}
-                </DropdownItem>
-              )}
-            </DropdownMenu>
-          </Dropdown>
+          <div>
+            <Input
+              errorMessage={
+                totalInputs < 1
+                  ? "Minimum value is 1"
+                  : totalInputs > 10
+                  ? "Maximum value is 10"
+                  : ""
+              }
+              // label="Total Inputs"
+              variant="bordered"
+              min={1}
+              max={10}
+              type="number"
+              value={totalInputs}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                if (value > 10) {
+                  setTotalInputs(10);
+                } else if (value < 1) {
+                  setTotalInputs(1);
+                } else {
+                  setTotalInputs(value);
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4  gap-10 ">
         {taskStates.map((taskState, index) => (
           <div
             key={index}
@@ -229,15 +239,21 @@ const Page = () => {
                 </DropdownMenu>
               </Dropdown>
             </div>
-            <Button color="primary" onClick={() => handleSubmit(index)}>
-              Submit
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                className="px-10"
+                color="primary"
+                onClick={() => handleSubmit(index)}
+              >
+                Submit
+              </Button>
+            </div>
           </div>
         ))}
       </div>
 
       {taskStates.length > 1 && (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center my-5 py-5 justify-center">
           <Button color="primary" size="lg" onClick={handleSubmitAll}>
             <p className="text-xl"> Submit All </p>
           </Button>
@@ -248,3 +264,25 @@ const Page = () => {
 };
 
 export default Page;
+{
+  /* <Dropdown>
+            <DropdownTrigger>
+              <Button variant="bordered" className="flex gap-4">
+                {totalInputs}
+
+                <FaChevronDown />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu items={inputNumbers}>
+              {(item) => (
+                <DropdownItem
+                  key={item.id}
+                  color={"default"}
+                  onClick={() => setTotalInputs(item.id)}
+                >
+                  {item.id}
+                </DropdownItem>
+              )}
+            </DropdownMenu>
+          </Dropdown> */
+}

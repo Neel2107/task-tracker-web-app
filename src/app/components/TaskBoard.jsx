@@ -91,7 +91,7 @@ const TaskBoard = () => {
     <div className="flex flex-col gap-5 justify-center py-10 px-2 lg:px-10 xl:px-20 ">
       <AddTaskModal isOpen={isAddModalOpen} onClose={closeAddModal} />
       <div className="flex flex-row items-center justify-between">
-        <h1 className="text-2xl font-bold ">Task Board</h1>
+        <h1 className="text-3xl font-bold ">Task Board</h1>
 
         <Avatar
           src="https://i.pravatar.cc/150?u=a04258114e29026302d"

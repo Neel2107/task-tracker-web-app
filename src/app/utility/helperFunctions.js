@@ -52,7 +52,6 @@ export const editTask = async (
   id,
   title,
   description,
-
   assignee,
   priority,
   status,
