@@ -17,6 +17,10 @@ import NoTasks from "./NoTasks";
 import { getTasks } from "../utility/helperFunctions";
 import { useRouter } from "next/navigation";
 
+
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+
 const TaskBoard = () => {
   const { tasks, setTasks } = useAppContext();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -26,16 +30,34 @@ const TaskBoard = () => {
   const [selectedStartDate, setSelectedStartDate] = useState("");
   const [selectedEndDate, setSelectedEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const route = useRouter()
+  const route = useRouter();
 
   const getTasksFromDB = async () => {
     const data = await getTasks();
     setTasks(data);
     setPriorityFilter("All");
+
     setIsLoading(false);
     console.log(data);
   };
 
+  useEffect(() => {
+  
+  },[isLoading])
+
+  
+  
+  
+
+  // Map tasks to events
+const events = tasks.map(task => ({
+  title: task.title,
+  start: new Date(task.startDate),
+}));
+
+
+
+  
   const closeAddModal = () => {
     // const loadedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     // setTasks(loadedTasks);
@@ -84,7 +106,6 @@ const TaskBoard = () => {
   useEffect(() => {
     getTasksFromDB();
     // const loadedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    
   }, []);
 
   return (
@@ -192,9 +213,28 @@ const TaskBoard = () => {
               </label>
             </div>
           </div>
+
+        <div className="flex-1 mx-2">
+        <FullCalendar
+        plugins={[dayGridPlugin]}
+        initialView="dayGridMonth"
+        weekends={false}
+        events={events}
+        className="w-full"
+   
+        eventContent={(eventInfo) => {
+          return (
+            <>
+              <b>{eventInfo.timeText}</b>
+              <i>{eventInfo.event.title}</i>
+            </>
+          );
+        }}
+      />
+        </div>
           <div>
             <button
-              onClick={ ()=> route.push('/add-task')}
+              onClick={() => route.push("/add-task")}
               className="px-4 lg:px-6 py-2 text-sm md:text-base rounded-md text-white font-semibold bg-blue-500"
             >
               Add Tasks
