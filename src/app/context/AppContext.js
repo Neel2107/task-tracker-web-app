@@ -5,20 +5,20 @@ import React, { useState } from "react";
 const AppContext = React.createContext();
 
 export function AppProvider({ children }) {
-  const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState([]);
 
-  const value = {
-    tasks,
-    setTasks,
-  };
+    const value = {
+        tasks,
+        setTasks,
+    };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
 export function useAppContext() {
-  const context = React.useContext(AppContext);
-  if (!context) {
-    throw new Error("useAppContext must be used within a AppProvider");
-  }
-  return context;
+    const context = React.useContext(AppContext);
+    if (!context) {
+        throw new Error("useAppContext must be used within a AppProvider");
+    }
+    return context;
 }
